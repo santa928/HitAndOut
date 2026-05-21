@@ -1,11 +1,14 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
+import baseTargetFrame from "../assets/base-target-frame.png";
 import nightStadiumField from "../assets/night-stadium-field.png";
+import runnerSprite from "../assets/runner-sprite.png";
 import type { Bases, HitLocation } from "../game/types";
 
 interface DiamondProps {
   mode: "pitcher" | "batter" | "read-only";
   bases: Bases;
   revealedOutLocations?: HitLocation[];
+  children?: ReactNode;
   onPick?: (location: HitLocation) => void;
 }
 
@@ -53,11 +56,13 @@ export function Diamond({
   mode,
   bases,
   revealedOutLocations = [],
+  children,
   onPick,
 }: DiamondProps): ReactElement {
   return (
     <section className={`diamond diamond--${mode}`} aria-label="球場盤面">
       <img alt="" className="diamond__stadium" src={nightStadiumField} />
+      {children}
       {LOCATIONS.map((location) => {
         const isRevealedOut = revealedOutLocations.includes(location.key);
         const label =
@@ -77,10 +82,16 @@ export function Diamond({
             onClick={() => onPick?.(location.key)}
             type="button"
           >
-            <span>{location.label}</span>
+            <img alt="" className="base__frame" src={baseTargetFrame} />
+            <span className="base__label">{location.label}</span>
+            <i aria-hidden="true" className="base__plate" />
             {isRevealedOut ? <em className="base__out">OUT</em> : null}
             {isOccupied ? (
-              <i className="runner" aria-label={`${location.label}の走者`} />
+              <img
+                alt={`${location.label}の走者`}
+                className="runner"
+                src={runnerSprite}
+              />
             ) : null}
           </button>
         );

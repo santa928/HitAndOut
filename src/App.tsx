@@ -55,61 +55,91 @@ export default function App(): ReactElement {
     );
   };
 
+  const boardMode =
+    match.phase === "pitcher-select"
+      ? "pitcher"
+      : match.phase === "batter-guess"
+        ? "batter"
+        : "read-only";
+
   return (
-    <main className="game-shell">
-      <Scoreboard match={match} />
+    <main className="game-shell game-shell--match">
+      <section
+        aria-label="ゲーム画面"
+        className={`match-screen match-screen--${match.phase}`}
+      >
+        <Diamond
+          bases={match.bases}
+          mode={boardMode}
+          onPick={boardMode === "pitcher" ? pickHiddenLocation : submitBatterGuess}
+          revealedOutLocations={match.revealedOutLocations}
+        >
+          <Scoreboard match={match} />
 
-      {match.phase === "pitcher-select" ? (
-        <section className="turn-screen">
-          <p className="eyebrow">{match.players[match.defense].name} PITCHING</p>
-          <h2>ヒットを隠す場所を選べ</h2>
-          <Diamond bases={match.bases} mode="pitcher" onPick={pickHiddenLocation} />
-        </section>
-      ) : null}
+          {match.phase === "pitcher-select" ? (
+            <TurnPrompt
+              headline="ヒットを隠す場所を選べ"
+              role={`${match.players[match.defense].name} PITCHING`}
+            />
+          ) : null}
 
-      {match.phase === "handoff-to-batter" ? (
-        <PassScreen onContinue={() => setMatch(revealBatterTurn(match))} />
-      ) : null}
+          {match.phase === "batter-guess" ? (
+            <TurnPrompt
+              headline="ヒットの場所を読め"
+              role={`${match.players[match.offense].name} BATTING`}
+            />
+          ) : null}
 
-      {match.phase === "batter-guess" ? (
-        <section className="turn-screen">
-          <p className="eyebrow">{match.players[match.offense].name} BATTING</p>
-          <h2>ヒットの場所を読め</h2>
-          <Diamond
-            bases={match.bases}
-            mode="batter"
-            onPick={submitBatterGuess}
-            revealedOutLocations={match.revealedOutLocations}
-          />
-        </section>
-      ) : null}
+          {match.phase === "handoff-to-batter" ? (
+            <PassScreen onContinue={() => setMatch(revealBatterTurn(match))} />
+          ) : null}
 
-      {match.phase === "result" ? (
-        <ResultBanner match={match} onContinue={continuePlay} />
-      ) : null}
+          {match.phase === "result" ? (
+            <ResultBanner match={match} onContinue={continuePlay} />
+          ) : null}
 
-      {match.phase === "side-change" ? (
-        <section className="change-screen">
-          <p className="result-word result-word--change">CHANGE!</p>
-          <button onClick={startNextHalf} type="button">
-            次の攻撃へ
-          </button>
-        </section>
-      ) : null}
+          {match.phase === "side-change" ? (
+            <section className="change-screen">
+              <p className="result-word result-word--change">CHANGE!</p>
+              <button onClick={startNextHalf} type="button">
+                次の攻撃へ
+              </button>
+            </section>
+          ) : null}
 
-      {match.phase === "game-over" ? (
-        <section className="game-over-screen">
-          <p className="eyebrow">FINAL</p>
-          <h2>{describeWinner(match)}</h2>
-          <button onClick={() => setMatch(createMatch())} type="button">
-            もう一試合
-          </button>
-          <button onClick={() => setMatch(null)} type="button">
-            タイトルへ
-          </button>
-        </section>
-      ) : null}
+          {match.phase === "game-over" ? (
+            <section className="game-over-screen">
+              <p className="eyebrow">FINAL</p>
+              <h2>{describeWinner(match)}</h2>
+              <button onClick={() => setMatch(createMatch())} type="button">
+                もう一試合
+              </button>
+              <button onClick={() => setMatch(null)} type="button">
+                タイトルへ
+              </button>
+            </section>
+          ) : null}
+        </Diamond>
+      </section>
     </main>
+  );
+}
+
+/**
+ * Show the active player instruction inside the stadium HUD.
+ */
+function TurnPrompt({
+  headline,
+  role,
+}: {
+  headline: string;
+  role: string;
+}): ReactElement {
+  return (
+    <section className="turn-prompt" aria-live="polite">
+      <p>{role}</p>
+      <h2>{headline}</h2>
+    </section>
   );
 }
 

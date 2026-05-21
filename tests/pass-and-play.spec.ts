@@ -26,23 +26,59 @@ test("batter keeps reading the same setup after an out", async ({ page }) => {
   await expect(page.getByRole("button", { name: "2塁はアウト" })).toBeDisabled();
 });
 
-test("scoreboard and field keep their anchored layout", async ({ page }, testInfo) => {
+test("hit feedback leaves a pixel runner on the occupied base", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "2人であそぶ" }).click();
+  await page.getByRole("button", { name: "1塁に隠す" }).click();
+  await page.getByRole("button", { name: "打者の画面へ" }).click();
+  await page.getByRole("button", { name: "1塁をねらう" }).click();
+  await expect(page.getByText("HIT!")).toBeVisible();
+
+  await page.getByRole("button", { name: "次の勝負へ" }).click();
+  await expect(page.getByAltText("1Bの走者")).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath(`${testInfo.project.name}-runner.png`),
+  });
+});
+
+test("scoreboard and playfield HUD stay inside the game screen", async ({
+  page,
+}, testInfo) => {
   await page.goto("/");
   await page.getByRole("button", { name: "2人であそぶ" }).click();
 
-  const scoreboard = page.getByLabel("スコアボード");
+  const gameScreen = page.getByLabel("ゲーム画面");
   const field = page.getByLabel("球場盤面");
+  const scoreboard = field.getByLabel("スコアボード");
+  const prompt = field.getByText("ヒットを隠す場所を選べ");
+  const gameScreenBox = await gameScreen.boundingBox();
   const scoreboardBox = await scoreboard.boundingBox();
   const fieldBox = await field.boundingBox();
+  const promptBox = await prompt.boundingBox();
 
+  expect(gameScreenBox).not.toBeNull();
   expect(scoreboardBox).not.toBeNull();
   expect(fieldBox).not.toBeNull();
+  expect(promptBox).not.toBeNull();
 
-  if (!scoreboardBox || !fieldBox) {
-    throw new Error("盤面レイアウトの境界を取得できませんでした。");
+  if (!gameScreenBox || !scoreboardBox || !fieldBox || !promptBox) {
+    throw new Error("ゲーム画面レイアウトの境界を取得できませんでした。");
   }
 
-  expect(scoreboardBox.y + scoreboardBox.height).toBeLessThan(fieldBox.y);
+  expect(fieldBox.x).toBeGreaterThanOrEqual(gameScreenBox.x);
+  expect(fieldBox.y).toBeGreaterThanOrEqual(gameScreenBox.y);
+  expect(scoreboardBox.x).toBeGreaterThanOrEqual(fieldBox.x);
+  expect(scoreboardBox.y).toBeGreaterThanOrEqual(fieldBox.y);
+  expect(scoreboardBox.x + scoreboardBox.width).toBeLessThanOrEqual(
+    fieldBox.x + fieldBox.width,
+  );
+  expect(promptBox.x).toBeGreaterThanOrEqual(fieldBox.x);
+  expect(promptBox.y + promptBox.height).toBeLessThanOrEqual(
+    fieldBox.y + fieldBox.height,
+  );
 
   for (const button of await field.getByRole("button").all()) {
     const buttonBox = await button.boundingBox();

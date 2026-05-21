@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
@@ -9,7 +9,14 @@ describe("App", () => {
 
     await user.click(screen.getByRole("button", { name: "2人であそぶ" }));
 
-    expect(screen.getByText("ヒットを隠す場所を選べ")).toBeInTheDocument();
+    const gameScreen = screen.getByLabelText("ゲーム画面");
+
+    expect(
+      within(gameScreen).getByText("ヒットを隠す場所を選べ"),
+    ).toBeInTheDocument();
+    expect(
+      within(gameScreen).getByLabelText("スコアボード"),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "1塁に隠す" })).toBeInTheDocument();
   });
 
