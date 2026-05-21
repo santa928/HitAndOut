@@ -14,12 +14,16 @@ export function ResultBanner({
   onContinue,
 }: ResultBannerProps): ReactElement {
   const label = match.lastPlay?.kind === "hit" ? "HIT!" : "OUT!";
+  const continueLabel =
+    match.lastPlay?.kind === "out" && match.outs < 3
+      ? "残りを読む"
+      : "次の勝負へ";
 
   return (
     <section className="result-banner" aria-live="polite">
       <p className={`result-word result-word--${match.lastPlay?.kind}`}>{label}</p>
       <button onClick={onContinue} type="button">
-        次の勝負へ
+        {continueLabel}
       </button>
     </section>
   );

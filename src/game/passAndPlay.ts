@@ -23,6 +23,7 @@ export function createMatch(
     bases: EMPTY_BASES,
     phase: "pitcher-select",
     secretHitLocation: null,
+    revealedOutLocations: [],
     lastPlay: null,
     winner: null,
   };
@@ -39,6 +40,7 @@ export function selectHitLocation(
     ...state,
     phase: "handoff-to-batter",
     secretHitLocation: location,
+    revealedOutLocations: [],
     lastPlay: null,
   };
 }
@@ -66,6 +68,7 @@ export function submitGuess(
       ...state,
       outs: state.outs + 1,
       phase: "result",
+      revealedOutLocations: [...state.revealedOutLocations, guess],
       lastPlay: { kind: "out", guess, hidden: state.secretHitLocation },
     };
   }
@@ -94,10 +97,19 @@ export function submitGuess(
  */
 export function continueAfterResult(state: MatchState): MatchState {
   if (state.outs < 3) {
+    if (state.lastPlay?.kind === "out") {
+      return {
+        ...state,
+        phase: "batter-guess",
+        lastPlay: null,
+      };
+    }
+
     return {
       ...state,
       phase: "pitcher-select",
       secretHitLocation: null,
+      revealedOutLocations: [],
       lastPlay: null,
     };
   }
@@ -108,6 +120,7 @@ export function continueAfterResult(state: MatchState): MatchState {
       phase: "game-over",
       bases: EMPTY_BASES,
       secretHitLocation: null,
+      revealedOutLocations: [],
       winner: resolveWinner(state.scores),
     };
   }
@@ -127,6 +140,7 @@ export function continueAfterResult(state: MatchState): MatchState {
     bases: EMPTY_BASES,
     phase: "side-change",
     secretHitLocation: null,
+    revealedOutLocations: [],
     lastPlay: null,
   };
 }

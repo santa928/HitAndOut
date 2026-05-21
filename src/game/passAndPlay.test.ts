@@ -15,35 +15,24 @@ describe("pass-and-play match", () => {
     expect(revealBatterTurn(selected).phase).toBe("batter-guess");
   });
 
-  it("adds an out for a missed guess and returns to pitcher selection", () => {
+  it("keeps the same hidden setup after a missed guess", () => {
     const state = revealBatterTurn(selectHitLocation(createMatch(), "first"));
     const result = submitGuess(state, "second");
     const next = continueAfterResult(result);
 
     expect(result.lastPlay).toMatchObject({ kind: "out", guess: "second" });
     expect(result.outs).toBe(1);
-    expect(next.phase).toBe("pitcher-select");
-    expect(next.secretHitLocation).toBeNull();
+    expect(next.phase).toBe("batter-guess");
+    expect(next.secretHitLocation).toBe("first");
+    expect(next.revealedOutLocations).toEqual(["second"]);
   });
 
   it("changes sides after the third out", () => {
-    const firstOut = continueAfterResult(
-      submitGuess(
-        revealBatterTurn(selectHitLocation(createMatch(), "first")),
-        "home",
-      ),
-    );
-    const secondOut = continueAfterResult(
-      submitGuess(
-        revealBatterTurn(selectHitLocation(firstOut, "second")),
-        "home",
-      ),
-    );
+    const batterTurn = revealBatterTurn(selectHitLocation(createMatch(), "first"));
+    const firstOut = continueAfterResult(submitGuess(batterTurn, "home"));
+    const secondOut = continueAfterResult(submitGuess(firstOut, "second"));
     const thirdOut = continueAfterResult(
-      submitGuess(
-        revealBatterTurn(selectHitLocation(secondOut, "third")),
-        "home",
-      ),
+      submitGuess(secondOut, "third"),
     );
 
     expect(thirdOut.phase).toBe("side-change");
@@ -56,12 +45,11 @@ describe("pass-and-play match", () => {
     let state = createMatch();
 
     for (let half = 0; half < 6; half += 1) {
-      for (const hitLocation of ["first", "second", "third"] as const) {
+      state = revealBatterTurn(selectHitLocation(state, "first"));
+
+      for (const guess of ["home", "second", "third"] as const) {
         state = continueAfterResult(
-          submitGuess(
-            revealBatterTurn(selectHitLocation(state, hitLocation)),
-            "home",
-          ),
+          submitGuess(state, guess),
         );
       }
 

@@ -75,7 +75,12 @@ export default function App(): ReactElement {
         <section className="turn-screen">
           <p className="eyebrow">{match.players[match.offense].name} BATTING</p>
           <h2>ヒットの場所を読め</h2>
-          <Diamond bases={match.bases} mode="batter" onPick={submitBatterGuess} />
+          <Diamond
+            bases={match.bases}
+            mode="batter"
+            onPick={submitBatterGuess}
+            revealedOutLocations={match.revealedOutLocations}
+          />
         </section>
       ) : null}
 

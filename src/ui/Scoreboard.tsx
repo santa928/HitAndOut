@@ -11,6 +11,7 @@ interface ScoreboardProps {
 export function Scoreboard({ match }: ScoreboardProps): ReactElement {
   return (
     <header className="scoreboard" aria-label="スコアボード">
+      <b className="scoreboard__title">HIT AND OUT</b>
       <strong>
         {match.inning}回{match.half === "top" ? "表" : "裏"}
       </strong>

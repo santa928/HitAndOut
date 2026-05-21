@@ -12,6 +12,20 @@ test("pitcher selection stays hidden before the batter guess", async ({ page }) 
   await expect(page.getByRole("button", { name: "1塁をねらう" })).toBeVisible();
 });
 
+test("batter keeps reading the same setup after an out", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "2人であそぶ" }).click();
+  await page.getByRole("button", { name: "1塁に隠す" }).click();
+  await page.getByRole("button", { name: "打者の画面へ" }).click();
+  await page.getByRole("button", { name: "2塁をねらう" }).click();
+
+  await expect(page.getByText("OUT!")).toBeVisible();
+  await page.getByRole("button", { name: "残りを読む" }).click();
+
+  await expect(page.getByRole("button", { name: "1塁をねらう" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "2塁はアウト" })).toBeDisabled();
+});
+
 test("scoreboard and field keep their anchored layout", async ({ page }, testInfo) => {
   await page.goto("/");
   await page.getByRole("button", { name: "2人であそぶ" }).click();

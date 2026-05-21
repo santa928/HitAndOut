@@ -31,7 +31,7 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "2塁をねらう" })).toBeInTheDocument();
   });
 
-  it("shows an out result and returns to the pitcher after continuing", async () => {
+  it("shows an out result and keeps the batter on the remaining guesses", async () => {
     const user = userEvent.setup();
     render(<App />);
 
@@ -43,8 +43,10 @@ describe("App", () => {
     expect(screen.getByText("OUT!")).toBeInTheDocument();
     expect(screen.getByText("OUT 1")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "次の勝負へ" }));
+    await user.click(screen.getByRole("button", { name: "残りを読む" }));
 
-    expect(screen.getByText("ヒットを隠す場所を選べ")).toBeInTheDocument();
+    expect(screen.getByText("ヒットの場所を読め")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "1塁をねらう" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "2塁はアウト" })).toBeDisabled();
   });
 });

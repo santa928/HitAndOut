@@ -49,6 +49,7 @@ export interface MatchState {
   bases: Bases;
   phase: MatchPhase;
   secretHitLocation: HitLocation | null;
+  revealedOutLocations: HitLocation[];
   lastPlay: PlayResult | null;
   winner: PlayerIndex | "draw" | null;
 }
