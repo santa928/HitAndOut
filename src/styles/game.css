@@ -1,6 +1,16 @@
 :root {
+  --night: #07171f;
+  --night-blue: #102f45;
+  --score-gold: #ffe08a;
+  --ink: #061017;
+  --grass: #1c7648;
+  --grass-bright: #47b14f;
+  --clay: #8c552a;
+  --chalk: #fff6db;
+  --danger: #ff6957;
+  --hit: #ffe45d;
   color: #f5f1d0;
-  background: #08171f;
+  background: var(--night);
   font-family: "Courier New", monospace;
   letter-spacing: 0;
 }
@@ -11,17 +21,35 @@
 
 body {
   margin: 0;
+  background: var(--night);
 }
 
 button {
   font: inherit;
+  min-height: 48px;
+  border: 3px solid var(--score-gold);
+  background: #183729;
+  color: inherit;
+  box-shadow:
+    0 0 0 3px var(--ink),
+    0 6px 0 var(--ink);
+  cursor: pointer;
 }
 
 .game-shell {
   min-height: 100svh;
   display: grid;
-  place-items: center;
-  padding: 24px;
+  align-content: start;
+  justify-items: center;
+  gap: 16px;
+  padding: clamp(12px, 4vw, 24px);
+  background:
+    linear-gradient(180deg, rgb(5 16 24 / 96%), rgb(9 30 33 / 94%)),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 5%) 0 2px,
+      transparent 2px 16px
+    );
 }
 
 .title-screen,
@@ -32,11 +60,23 @@ button {
   gap: 16px;
   justify-items: center;
   text-align: center;
+  align-self: center;
+  padding: clamp(16px, 4vw, 28px);
+  border: 4px solid var(--score-gold);
+  background:
+    linear-gradient(180deg, rgb(10 29 26 / 96%), rgb(6 18 20 / 96%)),
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 255 255 / 3%) 0 2px,
+      transparent 2px 12px
+    );
+  box-shadow: 0 0 0 4px var(--ink);
 }
 
 .eyebrow {
   margin: 0;
-  color: #ffd95e;
+  color: var(--score-gold);
+  font-weight: 700;
 }
 
 h1,
@@ -46,43 +86,66 @@ p {
 }
 
 .diamond {
-  width: min(100%, 360px);
-  aspect-ratio: 1;
+  width: min(100%, 420px);
+  aspect-ratio: 16 / 11;
   position: relative;
-  background: #1d6e49;
-  border: 8px solid #13331f;
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  overflow: hidden;
+  border: 4px solid #75683f;
+  background: var(--grass);
+  box-shadow: 0 0 0 4px var(--ink);
+}
+
+.diamond__stadium {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
 }
 
 .base {
   position: absolute;
-  width: 72px;
-  min-height: 72px;
+  width: clamp(58px, 17vw, 82px);
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border: 4px solid #f5f1d0;
-  background: #61351f;
+  gap: 3px;
+  border: 3px solid var(--chalk);
+  background: #123f23;
   color: #fff6a6;
+  z-index: 1;
 }
 
 .base--home {
-  left: calc(50% - 36px);
-  bottom: 12px;
+  left: 50%;
+  bottom: 6%;
+  translate: -50% 0;
 }
 
 .base--first {
-  right: 12px;
-  top: calc(50% - 36px);
+  right: 18%;
+  top: 60%;
+  translate: 50% -50%;
 }
 
 .base--second {
-  left: calc(50% - 36px);
-  top: 12px;
+  left: 50%;
+  top: 38%;
+  translate: -50% -50%;
 }
 
 .base--third {
-  left: 12px;
-  top: calc(50% - 36px);
+  left: 18%;
+  top: 60%;
+  translate: -50% -50%;
+}
+
+.runner {
+  width: 12px;
+  height: 16px;
+  border: 2px solid var(--ink);
+  background: var(--danger);
+  box-shadow: 0 -6px 0 var(--score-gold);
 }
 
 .scoreboard {
@@ -94,6 +157,7 @@ p {
   background: #071117;
   color: #f5f1d0;
   text-align: center;
+  box-shadow: 0 0 0 4px var(--ink);
 }
 
 .result-banner,
@@ -123,4 +187,15 @@ p {
 
 .result-word--change {
   color: #89d7ff;
+}
+
+@media (orientation: landscape) and (max-height: 540px) {
+  .game-shell {
+    grid-template-columns: minmax(220px, 420px) minmax(220px, 360px);
+    align-content: center;
+  }
+
+  .scoreboard {
+    grid-column: 1 / -1;
+  }
 }

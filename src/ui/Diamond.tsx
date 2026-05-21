@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import pixelStadium from "../assets/pixel-stadium.svg";
 import type { Bases, HitLocation } from "../game/types";
 
 interface DiamondProps {
@@ -30,6 +31,7 @@ const LOCATIONS: Array<{
 export function Diamond({ mode, bases, onPick }: DiamondProps): ReactElement {
   return (
     <section className={`diamond diamond--${mode}`} aria-label="球場盤面">
+      <img alt="" className="diamond__stadium" src={pixelStadium} />
       {LOCATIONS.map((location) => {
         const label = mode === "pitcher" ? location.pitcher : location.batter;
         const isOccupied = location.key !== "home" && bases[location.key];
@@ -44,7 +46,9 @@ export function Diamond({ mode, bases, onPick }: DiamondProps): ReactElement {
             type="button"
           >
             <span>{location.label}</span>
-            {isOccupied ? <i aria-label={`${location.label}の走者`} /> : null}
+            {isOccupied ? (
+              <i className="runner" aria-label={`${location.label}の走者`} />
+            ) : null}
           </button>
         );
       })}
