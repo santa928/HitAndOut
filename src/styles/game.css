@@ -358,24 +358,25 @@ p {
 }
 
 .scoreboard__outs i {
+  /* Match the lamp holes baked into scoreboard-housing.png. */
   position: absolute;
-  top: 71.6%;
-  width: clamp(13px, 4.25vw, 57px);
+  top: 69.7%;
+  width: 5.35%;
   aspect-ratio: 1;
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
 
 .scoreboard__outs i:nth-child(1) {
-  left: 77.6%;
+  left: 74.6%;
 }
 
 .scoreboard__outs i:nth-child(2) {
-  left: 84%;
+  left: 80.8%;
 }
 
 .scoreboard__outs i:nth-child(3) {
-  left: 90.4%;
+  left: 87.1%;
 }
 
 .scoreboard__outs i.is-on {

@@ -47,6 +47,12 @@ test("hit feedback leaves a pixel runner on the occupied base", async ({
 test("scoreboard and playfield HUD stay inside the game screen", async ({
   page,
 }, testInfo) => {
+  const outLampAnchors = [
+    { x: 895 / 1200, y: 405 / 581 },
+    { x: 970 / 1200, y: 405 / 581 },
+    { x: 1045 / 1200, y: 405 / 581 },
+  ];
+
   await page.goto("/");
   await page.getByRole("button", { name: "2人であそぶ" }).click();
 
@@ -79,7 +85,7 @@ test("scoreboard and playfield HUD stay inside the game screen", async ({
 
   await expect(outLamps).toHaveCount(3);
 
-  for (const lamp of await outLamps.all()) {
+  for (const [index, lamp] of (await outLamps.all()).entries()) {
     const lampBox = await lamp.boundingBox();
     expect(lampBox).not.toBeNull();
 
@@ -95,6 +101,18 @@ test("scoreboard and playfield HUD stay inside the game screen", async ({
     expect(lampBox.y + lampBox.height).toBeLessThanOrEqual(
       scoreboardBox.y + scoreboardBox.height,
     );
+
+    const lampCenter = {
+      x:
+        (lampBox.x + lampBox.width / 2 - scoreboardBox.x) /
+        scoreboardBox.width,
+      y:
+        (lampBox.y + lampBox.height / 2 - scoreboardBox.y) /
+        scoreboardBox.height,
+    };
+
+    expect(lampCenter.x).toBeCloseTo(outLampAnchors[index].x, 2);
+    expect(lampCenter.y).toBeCloseTo(outLampAnchors[index].y, 2);
   }
 
   expect(promptBox.x).toBeGreaterThanOrEqual(fieldBox.x);
