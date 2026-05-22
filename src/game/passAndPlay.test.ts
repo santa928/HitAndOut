@@ -7,6 +7,13 @@ import {
 } from "./passAndPlay";
 
 describe("pass-and-play match", () => {
+  it("starts every inning score as unplayed", () => {
+    expect(createMatch().inningScores).toEqual([
+      [null, null, null],
+      [null, null, null],
+    ]);
+  });
+
   it("hides the selected hit location behind the handoff phase", () => {
     const selected = selectHitLocation(createMatch(), "third");
 
@@ -27,6 +34,14 @@ describe("pass-and-play match", () => {
     expect(next.revealedOutLocations).toEqual(["second"]);
   });
 
+  it("adds a run to the active inning score", () => {
+    const batterTurn = revealBatterTurn(selectHitLocation(createMatch(), "home"));
+    const homeRun = submitGuess(batterTurn, "home");
+
+    expect(homeRun.scores[0]).toBe(1);
+    expect(homeRun.inningScores[0][0]).toBe(1);
+  });
+
   it("changes sides after the third out", () => {
     const batterTurn = revealBatterTurn(selectHitLocation(createMatch(), "first"));
     const firstOut = continueAfterResult(submitGuess(batterTurn, "home"));
@@ -39,6 +54,7 @@ describe("pass-and-play match", () => {
     expect(thirdOut.half).toBe("bottom");
     expect(thirdOut.offense).toBe(1);
     expect(thirdOut.outs).toBe(0);
+    expect(thirdOut.inningScores[0][0]).toBe(0);
   });
 
   it("finishes in a draw after the bottom of the third when scores match", () => {

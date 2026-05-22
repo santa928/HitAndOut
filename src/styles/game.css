@@ -243,139 +243,146 @@ p {
 
 .scoreboard {
   position: absolute;
-  top: 1.2%;
-  right: 2%;
-  left: 2%;
+  top: 0.2%;
+  right: 0.8%;
+  left: 0.8%;
   z-index: 3;
-  display: grid;
-  grid-template:
-    "title title title title title" auto
-    "inning one offense two outs" minmax(44px, auto)
-    / 0.82fr 1.18fr 0.76fr 1.18fr 0.98fr;
-  gap: 3px;
-  padding: clamp(6px, 1.5vw, 10px);
-  border: 3px solid var(--score-gold);
-  background:
-    linear-gradient(180deg, rgb(16 16 13 / 98%), rgb(3 6 8 / 98%)),
-    repeating-linear-gradient(90deg, rgb(255 255 255 / 6%) 0 2px, transparent 2px 8px);
+  aspect-ratio: 1802 / 873;
   color: #f5f1d0;
   text-align: center;
-  box-shadow:
-    0 0 0 3px var(--ink),
-    0 6px 0 rgb(0 0 0 / 70%);
+  filter: drop-shadow(0 7px 0 rgb(0 0 0 / 74%));
   pointer-events: none;
 }
 
-.scoreboard__title {
-  grid-area: title;
-  margin: -2px auto 0;
-  padding: 0 8px 2px;
-  color: #f6efe2;
-  font-size: clamp(1rem, 4.7vw, 1.9rem);
+.scoreboard__housing {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.scoreboard__table {
+  position: absolute;
+  top: 29.3%;
+  left: 8.7%;
+  width: 60.9%;
+  height: 48.5%;
+  min-width: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: #ffc81d;
+  text-shadow: 2px 2px 0 #674200;
+}
+
+.scoreboard__table th,
+.scoreboard__table td {
+  height: 33.33%;
+  min-width: 0;
+  overflow: hidden;
+  border: clamp(1px, 0.42vw, 2px) solid #c78e2c;
   line-height: 1;
-  text-shadow: 3px 3px 0 #061017;
 }
 
-.scoreboard__title span {
-  color: #ffc718;
-  text-shadow: 3px 3px 0 #996000;
+.scoreboard__team-column {
+  width: 34%;
 }
 
-.scoreboard__title em {
-  color: #ff5743;
-  font-style: normal;
-  text-shadow: 3px 3px 0 #84150e;
+.scoreboard__score-column {
+  width: 16.5%;
 }
 
-.scoreboard__inning,
-.scoreboard__offense,
-.scoreboard__outs,
-.scoreboard__player {
+.scoreboard__corner {
+  background: rgb(1 8 7 / 32%);
+}
+
+.scoreboard__inning-head {
+  color: #ffe08a;
+  font-size: clamp(0.72rem, 2.8vw, 1.2rem);
+  text-shadow: 2px 2px 0 #4c2d00;
+}
+
+.scoreboard__inning-head--runs {
+  color: #fff4bf;
+}
+
+.scoreboard__player-name {
+  padding: 0 clamp(2px, 0.8vw, 6px);
+  overflow: hidden;
+  color: var(--chalk);
+  font-size: clamp(0.5rem, 2vw, 0.88rem);
+  text-align: left;
+  text-overflow: ellipsis;
+  text-shadow: 2px 2px 0 #061017;
+  white-space: nowrap;
+}
+
+.scoreboard__row--0 .scoreboard__player-name {
+  box-shadow: inset 3px 0 0 #397df3;
+}
+
+.scoreboard__row--1 .scoreboard__player-name {
+  box-shadow: inset 3px 0 0 #d43d37;
+}
+
+.scoreboard__score-cell,
+.scoreboard__run-cell {
+  position: relative;
+  background: rgb(2 13 11 / 26%);
+  font-size: clamp(0.88rem, 3.5vw, 1.7rem);
+  font-weight: 700;
+}
+
+.scoreboard__score-cell:empty {
+  color: transparent;
+  text-shadow: none;
+}
+
+.scoreboard__score-cell--active {
+  background: rgb(33 24 1 / 84%);
+  box-shadow:
+    inset 0 0 0 2px #ffef8d,
+    inset 0 0 14px #ff9c16,
+    0 0 11px rgb(255 171 22 / 74%);
+}
+
+.scoreboard__run-cell {
+  color: #fff2a5;
+  background: rgb(40 25 0 / 44%);
+}
+
+.scoreboard__outs {
+  position: absolute;
+  top: 31%;
+  right: 7.1%;
+  width: 16.7%;
+  height: 43.5%;
   min-width: 0;
   display: grid;
   align-content: center;
   justify-items: center;
-  border: 2px solid #725a28;
-  background: rgb(5 12 13 / 88%);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 1fr auto;
+  gap: clamp(2px, 0.6vw, 5px);
+  padding: 0 4%;
 }
 
-.scoreboard__inning {
-  grid-area: inning;
-  color: #ffd02f;
-  font-size: clamp(0.72rem, 2.8vw, 1.1rem);
-}
-
-.scoreboard__player {
-  gap: 1px;
-  padding: 2px;
-}
-
-.scoreboard__player small {
-  max-width: 100%;
-  overflow: hidden;
-  color: var(--chalk);
-  font-size: clamp(0.48rem, 2vw, 0.78rem);
-  font-weight: 700;
-  line-height: 1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.scoreboard__player b {
+.scoreboard__out-count {
+  align-self: center;
+  grid-column: 1 / -1;
   color: #ffcb27;
-  font-size: clamp(1.15rem, 5vw, 2rem);
+  font-size: clamp(0.52rem, 2.1vw, 0.92rem);
   line-height: 1;
   text-shadow: 2px 2px 0 #674200;
 }
 
-.scoreboard__player--one {
-  grid-area: one;
-  border-top-color: #397df3;
-}
-
-.scoreboard__player--two {
-  grid-area: two;
-  border-top-color: #d43d37;
-}
-
-.scoreboard__offense {
-  grid-area: offense;
-  gap: 2px;
-  color: #ffd640;
-  font-size: clamp(0.46rem, 1.9vw, 0.72rem);
-  font-weight: 700;
-}
-
-.scoreboard__offense i {
-  width: 0;
-  height: 0;
-  border-block: 9px solid transparent;
-  border-left: 14px solid #ffcc27;
-  filter: drop-shadow(2px 2px 0 #061017);
-}
-
-.scoreboard__offense i.is-left {
-  border-right: 14px solid #ffcc27;
-  border-left: 0;
-}
-
-.scoreboard__outs {
-  grid-area: outs;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(2px, 0.8vw, 4px);
-  padding: 2px;
-}
-
-.scoreboard__out-count {
-  grid-column: 1 / -1;
-  font-size: clamp(0.5rem, 1.9vw, 0.72rem);
-  line-height: 1;
-}
-
 .scoreboard__outs i {
-  width: clamp(10px, 2.8vw, 15px);
+  align-self: end;
+  width: min(68%, clamp(10px, 3vw, 19px));
   aspect-ratio: 1;
-  border: 2px solid #5d2924;
+  border: clamp(1px, 0.34vw, 2px) solid #5d2924;
+  border-radius: 50%;
   background: #2a0c0b;
   box-shadow: 2px 2px 0 #061017;
 }
@@ -557,7 +564,7 @@ p {
   }
 
   .scoreboard {
-    grid-template-columns: 0.8fr 1.13fr 0.7fr 1.13fr 0.92fr;
+    top: 0.4%;
   }
 }
 
