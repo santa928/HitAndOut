@@ -1,5 +1,10 @@
 import { advanceRunners } from "./rules";
-import type { HitLocation, MatchState, PlayerIndex } from "./types";
+import type {
+  HitLocation,
+  InningScores,
+  MatchState,
+  PlayerIndex,
+} from "./types";
 
 const EMPTY_BASES = { first: false, second: false, third: false };
 
@@ -19,6 +24,7 @@ export function createMatch(
     offense: 0,
     defense: 1,
     scores: [0, 0],
+    inningScores: createEmptyInningScores(),
     outs: 0,
     bases: EMPTY_BASES,
     phase: "pitcher-select",
@@ -76,11 +82,13 @@ export function submitGuess(
   const hit = advanceRunners(state.bases, guess);
   const scores: [number, number] = [...state.scores];
   scores[state.offense] += hit.runs;
+  const inningScores = addRunsToCurrentInning(state, hit.runs);
 
   return {
     ...state,
     bases: hit.bases,
     scores,
+    inningScores,
     phase: "result",
     lastPlay: {
       kind: "hit",
@@ -114,10 +122,13 @@ export function continueAfterResult(state: MatchState): MatchState {
     };
   }
 
+  const inningScores = finalizeCurrentInningScore(state);
+
   if (state.inning === 3 && state.half === "bottom") {
     return {
       ...state,
       phase: "game-over",
+      inningScores,
       bases: EMPTY_BASES,
       secretHitLocation: null,
       revealedOutLocations: [],
@@ -139,6 +150,7 @@ export function continueAfterResult(state: MatchState): MatchState {
     outs: 0,
     bases: EMPTY_BASES,
     phase: "side-change",
+    inningScores,
     secretHitLocation: null,
     revealedOutLocations: [],
     lastPlay: null,
@@ -155,4 +167,52 @@ function resolveWinner(scores: [number, number]): PlayerIndex | "draw" {
   }
 
   return scores[0] > scores[1] ? 0 : 1;
+}
+
+/**
+ * Keep unplayed innings distinct from scoreless completed innings.
+ */
+function createEmptyInningScores(): InningScores {
+  return [
+    [null, null, null],
+    [null, null, null],
+  ];
+}
+
+/**
+ * Add runs to the offense row without mutating prior match history.
+ */
+function addRunsToCurrentInning(state: MatchState, runs: number): InningScores {
+  if (runs === 0) {
+    return state.inningScores;
+  }
+
+  const inningScores = cloneInningScores(state.inningScores);
+  const inningIndex = state.inning - 1;
+  const currentRuns = inningScores[state.offense][inningIndex] ?? 0;
+  inningScores[state.offense][inningIndex] = currentRuns + runs;
+
+  return inningScores;
+}
+
+/**
+ * Turn an empty active cell into a completed scoreless inning at side change.
+ */
+function finalizeCurrentInningScore(state: MatchState): InningScores {
+  const inningScores = cloneInningScores(state.inningScores);
+  const inningIndex = state.inning - 1;
+
+  inningScores[state.offense][inningIndex] ??= 0;
+
+  return inningScores;
+}
+
+/**
+ * Copy both player rows before a score cell is updated.
+ */
+function cloneInningScores(inningScores: InningScores): InningScores {
+  return [
+    [...inningScores[0]],
+    [...inningScores[1]],
+  ];
 }

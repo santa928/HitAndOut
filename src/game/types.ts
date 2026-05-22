@@ -28,6 +28,12 @@ export interface Player {
   name: string;
 }
 
+export type InningScore = number | null;
+export type InningScores = [
+  [InningScore, InningScore, InningScore],
+  [InningScore, InningScore, InningScore],
+];
+
 export type PlayResult =
   | { kind: "out"; guess: HitLocation; hidden: HitLocation }
   | {
@@ -45,6 +51,7 @@ export interface MatchState {
   offense: PlayerIndex;
   defense: PlayerIndex;
   scores: [number, number];
+  inningScores: InningScores;
   outs: number;
   bases: Bases;
   phase: MatchPhase;
