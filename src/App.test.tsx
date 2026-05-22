@@ -3,6 +3,23 @@ import userEvent from "@testing-library/user-event";
 import App from "./App";
 
 describe("App", () => {
+  it("opens and closes the how to play guide from the title", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "遊び方" }));
+
+    expect(screen.getByRole("dialog", { name: "遊び方" })).toHaveTextContent(
+      "投手役がヒット位置を隠す",
+    );
+
+    await user.click(screen.getByRole("button", { name: "とじる" }));
+
+    expect(
+      screen.queryByRole("dialog", { name: "遊び方" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("moves from title into the pitcher's hidden selection", async () => {
     const user = userEvent.setup();
     render(<App />);

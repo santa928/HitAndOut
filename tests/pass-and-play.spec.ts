@@ -1,5 +1,55 @@
 import { expect, test } from "@playwright/test";
 
+test("home how to play guide stays readable before the match", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+
+  await page.screenshot({
+    path: testInfo.outputPath(`${testInfo.project.name}-home.png`),
+  });
+
+  await page.getByRole("button", { name: "遊び方" }).click();
+
+  const guide = page.getByRole("dialog", { name: "遊び方" });
+  const guidePanel = guide.locator(".how-to-play__panel");
+  const closeButton = guide.getByRole("button", { name: "とじる" });
+  const guidePanelBox = await guidePanel.boundingBox();
+  const closeButtonBox = await closeButton.boundingBox();
+  const viewport = page.viewportSize();
+
+  await expect(guide).toContainText("投手役がヒット位置を隠す");
+
+  expect(guidePanelBox).not.toBeNull();
+  expect(closeButtonBox).not.toBeNull();
+  expect(viewport).not.toBeNull();
+
+  if (!guidePanelBox || !closeButtonBox || !viewport) {
+    throw new Error("遊び方モーダルの境界を取得できませんでした。");
+  }
+
+  expect(guidePanelBox.x).toBeGreaterThanOrEqual(0);
+  expect(guidePanelBox.y).toBeGreaterThanOrEqual(0);
+  expect(guidePanelBox.x + guidePanelBox.width).toBeLessThanOrEqual(
+    viewport.width,
+  );
+  expect(guidePanelBox.y + guidePanelBox.height).toBeLessThanOrEqual(
+    viewport.height,
+  );
+  expect(closeButtonBox.x).toBeGreaterThanOrEqual(guidePanelBox.x);
+  expect(closeButtonBox.y).toBeGreaterThanOrEqual(guidePanelBox.y);
+  expect(closeButtonBox.x + closeButtonBox.width).toBeLessThanOrEqual(
+    guidePanelBox.x + guidePanelBox.width,
+  );
+  expect(closeButtonBox.y + closeButtonBox.height).toBeLessThanOrEqual(
+    guidePanelBox.y + guidePanelBox.height,
+  );
+
+  await page.screenshot({
+    path: testInfo.outputPath(`${testInfo.project.name}-how-to-play.png`),
+  });
+});
+
 test("pitcher selection stays hidden before the batter guess", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "2人であそぶ" }).click();

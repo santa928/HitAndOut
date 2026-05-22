@@ -18,6 +18,7 @@ import { Scoreboard } from "./ui/Scoreboard";
  */
 export default function App(): ReactElement {
   const [match, setMatch] = useState<MatchState | null>(null);
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
 
   if (!match) {
     return (
@@ -25,10 +26,43 @@ export default function App(): ReactElement {
         <section className="title-screen" aria-labelledby="game-title">
           <p className="eyebrow">PASS AND PLAY</p>
           <h1 id="game-title">HIT AND OUT</h1>
-          <button onClick={() => setMatch(createMatch())} type="button">
-            2人であそぶ
-          </button>
+          <div className="title-screen__actions">
+            <button onClick={() => setMatch(createMatch())} type="button">
+              2人であそぶ
+            </button>
+            <button
+              className="title-screen__guide-button"
+              onClick={() => setIsHowToPlayOpen(true)}
+              type="button"
+            >
+              遊び方
+            </button>
+          </div>
         </section>
+
+        {isHowToPlayOpen ? (
+          <section
+            aria-labelledby="how-to-play-title"
+            aria-modal="true"
+            className="how-to-play"
+            role="dialog"
+          >
+            <div className="how-to-play__panel">
+              <p className="eyebrow">PASS AND PLAY</p>
+              <h2 id="how-to-play-title">遊び方</h2>
+              <ol>
+                <li>投手役がヒット位置を隠す。</li>
+                <li>端末を相手へ渡す。</li>
+                <li>打者役がヒット位置を読む。</li>
+                <li>アウトなら残りを読み、ヒットなら進塁。</li>
+                <li>3イニングの得点で勝負。</li>
+              </ol>
+              <button onClick={() => setIsHowToPlayOpen(false)} type="button">
+                とじる
+              </button>
+            </div>
+          </section>
+        ) : null}
       </main>
     );
   }
