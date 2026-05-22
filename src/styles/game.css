@@ -299,7 +299,7 @@ p {
 
 .scoreboard__inning-head {
   color: #ffe08a;
-  font-size: clamp(0.72rem, 2.8vw, 1.2rem);
+  font-size: clamp(0.86rem, 3.45vw, 1.54rem);
   text-shadow: 2px 2px 0 #4c2d00;
 }
 
@@ -311,7 +311,7 @@ p {
   padding: 0 clamp(2px, 0.8vw, 6px);
   overflow: hidden;
   color: var(--chalk);
-  font-size: clamp(0.5rem, 2vw, 0.88rem);
+  font-size: clamp(0.7rem, 2.72vw, 1.22rem);
   text-align: left;
   text-overflow: ellipsis;
   text-shadow: 2px 2px 0 #061017;
@@ -330,7 +330,7 @@ p {
 .scoreboard__run-cell {
   position: relative;
   background: rgb(2 13 11 / 26%);
-  font-size: clamp(0.88rem, 3.5vw, 1.7rem);
+  font-size: clamp(1.04rem, 4.28vw, 2.02rem);
   font-weight: 700;
 }
 
@@ -354,41 +354,32 @@ p {
 
 .scoreboard__outs {
   position: absolute;
-  top: 31%;
-  right: 7.1%;
-  width: 16.7%;
-  height: 43.5%;
-  min-width: 0;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: 1fr auto;
-  gap: clamp(2px, 0.6vw, 5px);
-  padding: 0 4%;
-}
-
-.scoreboard__out-count {
-  align-self: center;
-  grid-column: 1 / -1;
-  color: #ffcb27;
-  font-size: clamp(0.52rem, 2.1vw, 0.92rem);
-  line-height: 1;
-  text-shadow: 2px 2px 0 #674200;
+  inset: 0;
 }
 
 .scoreboard__outs i {
-  align-self: end;
-  width: min(68%, clamp(10px, 3vw, 19px));
+  position: absolute;
+  top: 71.6%;
+  width: clamp(13px, 4.25vw, 57px);
   aspect-ratio: 1;
-  border: clamp(1px, 0.34vw, 2px) solid #5d2924;
   border-radius: 50%;
-  background: #2a0c0b;
-  box-shadow: 2px 2px 0 #061017;
+  transform: translate(-50%, -50%);
+}
+
+.scoreboard__outs i:nth-child(1) {
+  left: 77.6%;
+}
+
+.scoreboard__outs i:nth-child(2) {
+  left: 84%;
+}
+
+.scoreboard__outs i:nth-child(3) {
+  left: 90.4%;
 }
 
 .scoreboard__outs i.is-on {
-  border-color: #fff0b8;
+  border: clamp(1px, 0.34vw, 2px) solid #fff0b8;
   background: #ff3329;
   box-shadow:
     inset 2px 2px 0 #ff9d71,

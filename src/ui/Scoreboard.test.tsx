@@ -30,4 +30,17 @@ describe("Scoreboard", () => {
     );
     expect(container.querySelector(".scoreboard__housing")).toBeInTheDocument();
   });
+
+  it("uses only lamps for the visible out count", () => {
+    const match: MatchState = {
+      ...createMatch(),
+      outs: 2,
+    };
+
+    const { container } = render(<Scoreboard match={match} />);
+
+    expect(screen.queryByText("OUT 2")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("2アウト")).toBeInTheDocument();
+    expect(container.querySelectorAll(".scoreboard__outs .is-on")).toHaveLength(2);
+  });
 });

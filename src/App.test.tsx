@@ -48,7 +48,8 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: "2塁をねらう" }));
 
     expect(screen.getByText("OUT!")).toBeInTheDocument();
-    expect(screen.getByText("OUT 1")).toBeInTheDocument();
+    expect(screen.queryByText("OUT 1")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("1アウト")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "残りを読む" }));
 

@@ -86,10 +86,17 @@ export function Scoreboard({ match }: ScoreboardProps): ReactElement {
           ))}
         </tbody>
       </table>
-      <span className="scoreboard__outs">
-        <b className="scoreboard__out-count">OUT {match.outs}</b>
+      <span
+        aria-label={`${match.outs}アウト`}
+        className="scoreboard__outs"
+        role="img"
+      >
         {([0, 1, 2] as const).map((out) => (
-          <i className={out < match.outs ? "is-on" : ""} key={out} />
+          <i
+            aria-hidden="true"
+            className={out < match.outs ? "is-on" : ""}
+            key={out}
+          />
         ))}
       </span>
     </header>

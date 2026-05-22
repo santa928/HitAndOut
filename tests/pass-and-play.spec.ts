@@ -58,6 +58,7 @@ test("scoreboard and playfield HUD stay inside the game screen", async ({
   const scoreboardBox = await scoreboard.boundingBox();
   const fieldBox = await field.boundingBox();
   const promptBox = await prompt.boundingBox();
+  const outLamps = scoreboard.locator(".scoreboard__outs i");
 
   expect(gameScreenBox).not.toBeNull();
   expect(scoreboardBox).not.toBeNull();
@@ -75,6 +76,27 @@ test("scoreboard and playfield HUD stay inside the game screen", async ({
   expect(scoreboardBox.x + scoreboardBox.width).toBeLessThanOrEqual(
     fieldBox.x + fieldBox.width,
   );
+
+  await expect(outLamps).toHaveCount(3);
+
+  for (const lamp of await outLamps.all()) {
+    const lampBox = await lamp.boundingBox();
+    expect(lampBox).not.toBeNull();
+
+    if (!lampBox) {
+      throw new Error("アウトランプの境界を取得できませんでした。");
+    }
+
+    expect(lampBox.x).toBeGreaterThanOrEqual(scoreboardBox.x);
+    expect(lampBox.y).toBeGreaterThanOrEqual(scoreboardBox.y);
+    expect(lampBox.x + lampBox.width).toBeLessThanOrEqual(
+      scoreboardBox.x + scoreboardBox.width,
+    );
+    expect(lampBox.y + lampBox.height).toBeLessThanOrEqual(
+      scoreboardBox.y + scoreboardBox.height,
+    );
+  }
+
   expect(promptBox.x).toBeGreaterThanOrEqual(fieldBox.x);
   expect(promptBox.y + promptBox.height).toBeLessThanOrEqual(
     fieldBox.y + fieldBox.height,
