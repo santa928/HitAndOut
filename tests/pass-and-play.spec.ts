@@ -12,7 +12,9 @@ test("pitcher selection stays hidden before the batter guess", async ({ page }) 
   await expect(page.getByRole("button", { name: "1塁をねらう" })).toBeVisible();
 });
 
-test("batter keeps reading the same setup after an out", async ({ page }) => {
+test("batter keeps reading the same setup after an out", async ({
+  page,
+}, testInfo) => {
   await page.goto("/");
   await page.getByRole("button", { name: "2人であそぶ" }).click();
   await page.getByRole("button", { name: "1塁に隠す" }).click();
@@ -24,6 +26,10 @@ test("batter keeps reading the same setup after an out", async ({ page }) => {
 
   await expect(page.getByRole("button", { name: "1塁をねらう" })).toBeVisible();
   await expect(page.getByRole("button", { name: "2塁はアウト" })).toBeDisabled();
+
+  await page.screenshot({
+    path: testInfo.outputPath(`${testInfo.project.name}-out-lamp.png`),
+  });
 });
 
 test("hit feedback leaves a pixel runner on the occupied base", async ({

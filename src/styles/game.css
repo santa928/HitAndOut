@@ -273,6 +273,8 @@ p {
   border-collapse: collapse;
   table-layout: fixed;
   color: #ffc81d;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
   text-shadow: 2px 2px 0 #674200;
 }
 
@@ -363,7 +365,6 @@ p {
   top: 69.7%;
   width: 5.35%;
   aspect-ratio: 1;
-  border-radius: 50%;
   transform: translate(-50%, -50%);
 }
 
@@ -380,12 +381,46 @@ p {
 }
 
 .scoreboard__outs i.is-on {
-  border: clamp(1px, 0.34vw, 2px) solid #fff0b8;
-  background: #ff3329;
+  filter: drop-shadow(0 0 clamp(1px, 0.22vw, 3px) #ff6a3d);
+}
+
+.scoreboard__outs i.is-on::before,
+.scoreboard__outs i.is-on::after {
+  position: absolute;
+  content: "";
+  clip-path: polygon(
+    22% 0,
+    78% 0,
+    100% 22%,
+    100% 78%,
+    78% 100%,
+    22% 100%,
+    0 78%,
+    0 22%
+  );
+}
+
+.scoreboard__outs i.is-on::before {
+  inset: 13%;
+  background:
+    linear-gradient(135deg, #ffe1a2 0 18%, transparent 18%),
+    #9a1f19;
   box-shadow:
-    inset 2px 2px 0 #ff9d71,
-    2px 2px 0 #061017,
-    0 0 9px #ff4937;
+    0 clamp(-3px, -0.2vw, -1px) 0 #ffbd6a,
+    clamp(1px, 0.2vw, 3px) 0 0 #4f130f,
+    0 clamp(1px, 0.2vw, 3px) 0 #4f130f,
+    clamp(-3px, -0.2vw, -1px) 0 0 #ff8d48;
+}
+
+.scoreboard__outs i.is-on::after {
+  inset: 24%;
+  background:
+    linear-gradient(135deg, #fff1c4 0 19%, transparent 19%),
+    #ff4b31;
+  box-shadow:
+    inset clamp(-2px, -0.18vw, -1px) clamp(-2px, -0.18vw, -1px) 0
+      #c6231e,
+    inset clamp(1px, 0.18vw, 2px) clamp(1px, 0.18vw, 2px) 0 #ff9a54;
 }
 
 .turn-prompt {
