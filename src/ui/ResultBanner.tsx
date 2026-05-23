@@ -19,13 +19,13 @@ export function ResultBanner({
       ? "次の勝負へ"
       : match.outs < 3
         ? "残りを読む"
-        : "チェンジへ";
+        : "攻守交代へ";
   const call =
     match.lastPlay?.kind === "hit"
       ? "ランナーが進む!"
       : match.outs < 3
         ? "読みを続けろ!"
-        : "3 OUT CHANGE!";
+        : "3 OUT 攻守交代!";
 
   return (
     <section className="result-banner" aria-live="polite">

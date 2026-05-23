@@ -55,10 +55,10 @@ test("pitcher selection stays hidden before the batter guess", async ({ page }) 
   await page.getByRole("button", { name: "2人であそぶ" }).click();
   await page.getByRole("button", { name: "1塁に隠す" }).click();
 
-  await expect(page.getByText("打者に端末をわたす")).toBeVisible();
+  await expect(page.getByText("PLAYER 1 に端末を渡す")).toBeVisible();
   await expect(page.getByRole("button", { name: "1塁に隠す" })).toHaveCount(0);
 
-  await page.getByRole("button", { name: "打者の画面へ" }).click();
+  await page.getByRole("button", { name: "PLAYER 1 の攻撃へ" }).click();
   await expect(page.getByRole("button", { name: "1塁をねらう" })).toBeVisible();
 });
 
@@ -68,7 +68,7 @@ test("batter keeps reading the same setup after an out", async ({
   await page.goto("/");
   await page.getByRole("button", { name: "2人であそぶ" }).click();
   await page.getByRole("button", { name: "1塁に隠す" }).click();
-  await page.getByRole("button", { name: "打者の画面へ" }).click();
+  await page.getByRole("button", { name: "PLAYER 1 の攻撃へ" }).click();
   await page.getByRole("button", { name: "2塁をねらう" }).click();
 
   await expect(page.getByText("OUT!")).toBeVisible();
@@ -88,7 +88,7 @@ test("hit feedback leaves a pixel runner on the occupied base", async ({
   await page.goto("/");
   await page.getByRole("button", { name: "2人であそぶ" }).click();
   await page.getByRole("button", { name: "1塁に隠す" }).click();
-  await page.getByRole("button", { name: "打者の画面へ" }).click();
+  await page.getByRole("button", { name: "PLAYER 1 の攻撃へ" }).click();
   await page.getByRole("button", { name: "1塁をねらう" }).click();
   await expect(page.getByText("HIT!")).toBeVisible();
 
@@ -115,7 +115,7 @@ test("scoreboard and playfield HUD stay inside the game screen", async ({
   const gameScreen = page.getByLabel("ゲーム画面");
   const field = page.getByLabel("球場盤面");
   const scoreboard = field.getByLabel("スコアボード");
-  const prompt = field.getByText("ヒットを隠す場所を選べ");
+  const prompt = field.getByText("PLAYER 2 が守備セット");
   const gameScreenBox = await gameScreen.boundingBox();
   const scoreboardBox = await scoreboard.boundingBox();
   const fieldBox = await field.boundingBox();
@@ -196,5 +196,36 @@ test("scoreboard and playfield HUD stay inside the game screen", async ({
 
   await page.screenshot({
     path: testInfo.outputPath(`${testInfo.project.name}-field.png`),
+  });
+});
+
+test("side change clearly hands the phone to the next defender", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "2人であそぶ" }).click();
+  await page.getByRole("button", { name: "1塁に隠す" }).click();
+  await page.getByRole("button", { name: "PLAYER 1 の攻撃へ" }).click();
+
+  for (const guess of ["2塁をねらう", "3塁をねらう", "ホームをねらう"]) {
+    await page.getByRole("button", { name: guess }).click();
+    await page
+      .getByRole("button", { name: /残りを読む|攻守交代へ/ })
+      .click();
+  }
+
+  await expect(page.getByText("PLAYER 1 に端末を渡す")).toBeVisible();
+  await expect(page.getByText("PLAYER 1 守備セット")).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath(`${testInfo.project.name}-side-change-relay.png`),
+  });
+
+  await page.getByRole("button", { name: "PLAYER 1 の守備セットへ" }).click();
+
+  await expect(page.getByText("PLAYER 1 が守備セット")).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath(`${testInfo.project.name}-defense-setup.png`),
   });
 });

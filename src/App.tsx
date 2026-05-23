@@ -95,6 +95,8 @@ export default function App(): ReactElement {
       : match.phase === "batter-guess"
         ? "batter"
         : "read-only";
+  const offenseName = match.players[match.offense].name;
+  const defenseName = match.players[match.defense].name;
 
   return (
     <main className="game-shell game-shell--match">
@@ -112,20 +114,32 @@ export default function App(): ReactElement {
 
           {match.phase === "pitcher-select" ? (
             <TurnPrompt
-              headline="ヒットを隠す場所を選べ"
-              role={`${match.players[match.defense].name} PITCHING`}
+              detail={`${offenseName} に見せずヒット位置を隠す`}
+              headline={`${defenseName} が守備セット`}
+              playerIndex={match.defense}
+              role={`${defenseName} DEFENSE`}
+              tone="defense"
             />
           ) : null}
 
           {match.phase === "batter-guess" ? (
             <TurnPrompt
-              headline="ヒットの場所を読め"
-              role={`${match.players[match.offense].name} BATTING`}
+              detail={`${defenseName} のセットを読む`}
+              headline={`${offenseName} がヒットの場所を読む`}
+              playerIndex={match.offense}
+              role={`${offenseName} BATTING`}
+              tone="offense"
             />
           ) : null}
 
           {match.phase === "handoff-to-batter" ? (
-            <PassScreen onContinue={() => setMatch(revealBatterTurn(match))} />
+            <PassScreen
+              batterIndex={match.offense}
+              batterName={offenseName}
+              defenderIndex={match.defense}
+              defenderName={defenseName}
+              onContinue={() => setMatch(revealBatterTurn(match))}
+            />
           ) : null}
 
           {match.phase === "result" ? (
@@ -133,12 +147,7 @@ export default function App(): ReactElement {
           ) : null}
 
           {match.phase === "side-change" ? (
-            <section className="change-screen">
-              <p className="result-word result-word--change">CHANGE!</p>
-              <button onClick={startNextHalf} type="button">
-                次の攻撃へ
-              </button>
-            </section>
+            <ChangeScreen match={match} onContinue={startNextHalf} />
           ) : null}
 
           {match.phase === "game-over" ? (
@@ -163,16 +172,67 @@ export default function App(): ReactElement {
  * Show the active player instruction inside the stadium HUD.
  */
 function TurnPrompt({
+  detail,
   headline,
+  playerIndex,
   role,
+  tone,
 }: {
+  detail?: string;
   headline: string;
+  playerIndex: number;
   role: string;
+  tone: "defense" | "offense";
 }): ReactElement {
   return (
-    <section className="turn-prompt" aria-live="polite">
-      <p>{role}</p>
-      <h2>{headline}</h2>
+    <section
+      className={`turn-prompt turn-prompt--${tone} player-color--${playerIndex}`}
+      aria-live="polite"
+    >
+      <p className={`player-color--${playerIndex}`}>{role}</p>
+      <h2 className={`player-color--${playerIndex}`}>{headline}</h2>
+      {detail ? <span className="turn-prompt__detail">{detail}</span> : null}
+    </section>
+  );
+}
+
+/**
+ * Make the side-change handoff explicit before the next hidden setup begins.
+ */
+function ChangeScreen({
+  match,
+  onContinue,
+}: {
+  match: MatchState;
+  onContinue: () => void;
+}): ReactElement {
+  const offenseName = match.players[match.offense].name;
+  const defenseName = match.players[match.defense].name;
+
+  return (
+    <section className="change-screen" aria-live="polite">
+      <div className="change-screen__relay">
+        <p className="change-screen__eyebrow">CHANGE!</p>
+        <p className={`change-screen__handoff player-color--${match.defense}`}>
+          {defenseName} に端末を渡す
+        </p>
+        <div className="change-screen__roles">
+          <p className={`player-color--${match.defense}`}>
+            <span>守備</span>
+            <b>{defenseName}</b>
+          </p>
+          <p className={`player-color--${match.offense}`}>
+            <span>攻撃</span>
+            <b>{offenseName}</b>
+          </p>
+        </div>
+        <p className={`change-screen__next player-color--${match.defense}`}>
+          {defenseName} 守備セット
+        </p>
+      </div>
+      <button onClick={onContinue} type="button">
+        {defenseName} の守備セットへ
+      </button>
     </section>
   );
 }
