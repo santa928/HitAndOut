@@ -89,6 +89,14 @@ export default function App(): ReactElement {
     );
   };
 
+  const startNextDefenseSetup = (): void => {
+    setMatch((current) =>
+      current?.phase === "handoff-to-defender"
+        ? { ...current, phase: "pitcher-select" }
+        : current,
+    );
+  };
+
   const boardMode =
     match.phase === "pitcher-select"
       ? "pitcher"
@@ -140,6 +148,10 @@ export default function App(): ReactElement {
               defenderName={defenseName}
               onContinue={() => setMatch(revealBatterTurn(match))}
             />
+          ) : null}
+
+          {match.phase === "handoff-to-defender" ? (
+            <DefenderHandoffScreen match={match} onContinue={startNextDefenseSetup} />
           ) : null}
 
           {match.phase === "result" ? (
@@ -228,6 +240,40 @@ function ChangeScreen({
         </div>
         <p className={`change-screen__next player-color--${match.defense}`}>
           {defenseName} 守備セット
+        </p>
+      </div>
+      <button onClick={onContinue} type="button">
+        {defenseName} の守備セットへ
+      </button>
+    </section>
+  );
+}
+
+/**
+ * Tell the batter to return the phone before the defender hides the next hit.
+ */
+function DefenderHandoffScreen({
+  match,
+  onContinue,
+}: {
+  match: MatchState;
+  onContinue: () => void;
+}): ReactElement {
+  const offenseName = match.players[match.offense].name;
+  const defenseName = match.players[match.defense].name;
+
+  return (
+    <section className="defender-handoff-screen" aria-live="polite">
+      <div className="defender-handoff-screen__panel">
+        <p className="defender-handoff-screen__eyebrow">NEXT SETUP</p>
+        <p className={`defender-handoff-screen__handoff player-color--${match.defense}`}>
+          {defenseName} に端末を渡す
+        </p>
+        <p className={`defender-handoff-screen__next player-color--${match.defense}`}>
+          {defenseName} 守備セット
+        </p>
+        <p className="defender-handoff-screen__detail">
+          {offenseName} は画面を見ずに待つ
         </p>
       </div>
       <button onClick={onContinue} type="button">

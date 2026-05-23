@@ -115,7 +115,7 @@ export function continueAfterResult(state: MatchState): MatchState {
 
     return {
       ...state,
-      phase: "pitcher-select",
+      phase: "handoff-to-defender",
       secretHitLocation: null,
       revealedOutLocations: [],
       lastPlay: null,

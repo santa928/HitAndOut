@@ -75,6 +75,32 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "2塁はアウト" })).toBeDisabled();
   });
 
+  it("announces the phone handoff back to the defender after a hit", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "2人であそぶ" }));
+    await user.click(screen.getByRole("button", { name: "1塁に隠す" }));
+    await user.click(screen.getByRole("button", { name: "PLAYER 1 の攻撃へ" }));
+    await user.click(screen.getByRole("button", { name: "1塁をねらう" }));
+
+    expect(screen.getByText("HIT!")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "次の勝負へ" }));
+
+    expect(screen.getByText("PLAYER 2 に端末を渡す")).toBeInTheDocument();
+    expect(screen.getByText("PLAYER 2 守備セット")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "PLAYER 2 の守備セットへ" }),
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: "PLAYER 2 の守備セットへ" }),
+    );
+
+    expect(screen.getByText("PLAYER 2 が守備セット")).toBeInTheDocument();
+  });
+
   it("names the next defender during the side change and setup handoff", async () => {
     const user = userEvent.setup();
     render(<App />);

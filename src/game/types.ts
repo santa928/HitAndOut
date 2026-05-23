@@ -18,6 +18,7 @@ export interface AdvanceResult {
 export type MatchPhase =
   | "pitcher-select"
   | "handoff-to-batter"
+  | "handoff-to-defender"
   | "batter-guess"
   | "result"
   | "side-change"

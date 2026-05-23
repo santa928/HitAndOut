@@ -42,6 +42,16 @@ describe("pass-and-play match", () => {
     expect(homeRun.inningScores[0][0]).toBe(1);
   });
 
+  it("requires a handoff back to the defender after a hit", () => {
+    const batterTurn = revealBatterTurn(selectHitLocation(createMatch(), "first"));
+    const hit = submitGuess(batterTurn, "first");
+    const next = continueAfterResult(hit);
+
+    expect(next.phase).toBe("handoff-to-defender");
+    expect(next.defense).toBe(1);
+    expect(next.secretHitLocation).toBeNull();
+  });
+
   it("changes sides after the third out", () => {
     const batterTurn = revealBatterTurn(selectHitLocation(createMatch(), "first"));
     const firstOut = continueAfterResult(submitGuess(batterTurn, "home"));

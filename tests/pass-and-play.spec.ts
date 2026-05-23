@@ -93,6 +93,14 @@ test("hit feedback leaves a pixel runner on the occupied base", async ({
   await expect(page.getByText("HIT!")).toBeVisible();
 
   await page.getByRole("button", { name: "次の勝負へ" }).click();
+  await expect(page.getByText("PLAYER 2 に端末を渡す")).toBeVisible();
+  await expect(page.getByText("PLAYER 2 守備セット")).toBeVisible();
+
+  await page.screenshot({
+    path: testInfo.outputPath(`${testInfo.project.name}-hit-handoff.png`),
+  });
+
+  await page.getByRole("button", { name: "PLAYER 2 の守備セットへ" }).click();
   await expect(page.getByAltText("1Bの走者")).toBeVisible();
 
   await page.screenshot({
